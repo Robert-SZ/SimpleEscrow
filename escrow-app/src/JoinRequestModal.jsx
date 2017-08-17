@@ -5,10 +5,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Modal, Button} from 'react-bootstrap';
 
-class CreateRequestModal extends React.Component {
-    constructor(props){
+class JoinRequestModal extends React.Component {
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             value: '',
         }
     }
@@ -17,8 +17,9 @@ class CreateRequestModal extends React.Component {
         this.setState({value: event.target.value});
     }
 
-    handleSave(){
-        this.props.save(this.state);
+    handleSave(event) {
+        this.props.save({...this.state, itemId: this.props.itemId});
+        event.preventDefault();
     }
 
     render() {
@@ -27,28 +28,29 @@ class CreateRequestModal extends React.Component {
                 <Modal.Header>
                     <Modal.Title>What % of contract can you deliver?</Modal.Title>
                 </Modal.Header>
+                <form onSubmit={this.handleSave.bind(this)}>
+                    <Modal.Body>
+                        <div className="input-group">
+                            <span className="input-group-addon" id="basic-addon1">%</span>
+                            <input value={this.state.title} onChange={this.handleValue.bind(this)}
+                                   type="text" id="input" placeholder="10" aria-describedby="basic-addon1" required/>
+                        </div>
+                    </Modal.Body>
 
-                <Modal.Body>
-                    <div className="input-group">
-                        <span className="input-group-addon" id="basic-addon1">%</span>
-                        <input value={this.state.title} onChange={this.handleValue.bind(this)}
-                               type="text" id="input" placeholder="10" aria-describedby="basic-addon1"/>
-                    </div>
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button onClick={this.props.close}>Close</Button>
-                    <Button bsStyle="primary" onClick={this.handleSave.bind(this)}>Join</Button>
-                </Modal.Footer>
-
+                    <Modal.Footer>
+                        <button className="btn btn-secondary" onClick={this.props.close}>Close</button>
+                        <button className="btn btn-primary" type="submit">Join</button>
+                    </Modal.Footer>
+                </form>
             </Modal.Dialog>
         </div>)
     }
 }
 
-CreateRequestModal.propTypes = {
+JoinRequestModal.propTypes = {
+    itemId: PropTypes.number.isRequired,
     close: PropTypes.func.isRequired,
     save: PropTypes.func.isRequired
 };
 
-export default CreateRequestModal;
+export default JoinRequestModal;

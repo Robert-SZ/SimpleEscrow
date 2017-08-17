@@ -2,28 +2,51 @@ import React, {Component} from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 
-import Provider from './eth/provider';
+import {ProgressBar} from 'react-bootstrap';
+import EscrowService from './EscrowService';
 import OrdersTable from './OrdersTable';
 import CreateRequestModal from './CreateRequestModal';
 import JoinRequestModal from './JoinRequestModal'
+
 
 class App extends Component {
 
     constructor() {
         super();
         this.state = {
-            metaMaskProvider: false,
+            metaMaskProvider: true,
             apiProvider: false,
-            orders: [],
+            orders: {
+                loader: false,
+                items: [{
+                    title: 'A',
+                    amount: '100',
+                    usedPercentage: '15',
+                    participantsCount: 3
+                }]
+            },
             showModal: false,
             showJoinModal: false
         };
-        this.provider = new Provider();
+        this.escrowService = new EscrowService();
     }
 
     componentDidMount() {
-        this.setState({metaMaskProvider: this.provider.initMetamask()});
+        //this.setState({metaMaskProvider: this.provider.initMetamask()});
+        this.fillOrders();
+    }
 
+    fillOrders() {
+        this.escrowService.getOrders().then(items => {
+            this.setState({
+                orders: {
+                    loader: false,
+                    items: items
+                }
+            });
+        }).catch(error => {
+            console.error(error);
+        })
     }
 
     handleClickMetamask() {
@@ -52,7 +75,9 @@ class App extends Component {
     }
 
     joinRequest(data) {
-        this.closeModal();
+        this.setState({orders: {loader: true}});
+        this.closeJoinModal();
+        this.escrowService.join(data.)
     }
 
 
@@ -74,15 +99,22 @@ class App extends Component {
 
                     </div>
                 </section>
-                <div className="container"> {this.state.orders && this.state.orders.length > 0 ?
-                    <OrdersTable items={this.state.orders} join={this.showJoinModal.bind(this)}/> :
-                    <div><span>Orders list is empty. Please add new order</span>
-                        <a href="#" className="btn btn-primary" onClick={this.handleNewOrder.bind(this)}>Create a
-                            request</a></div>}</div>
+                {this.state.orders.loader && <div>
+                    <div><ProgressBar active now={100}/></div>
+                    <div>Loading...</div>
+                </div>}
+                {!this.state.orders.loader &&
+                <div className="container">
+                    {this.state.orders.items && this.state.orders.items.length > 0 ?
+                        <OrdersTable items={this.state.orders.items} join={this.showJoinModal.bind(this)}/> :
+                        <div><span>Orders list is empty. Please add new order</span>
+                            <a href="#" className="btn btn-primary" onClick={this.handleNewOrder.bind(this)}>Create a
+                                request</a></div>}</div>}
+
                 {this.state.showModal &&
                 <CreateRequestModal close={this.closeModal.bind(this)} save={this.createRequest.bind(this)}/>}
                 {this.state.showJoinModal &&
-                <JoinRequestModal close={this.closeJoinModal.bind(this)} save={this.joinRequest.bind(this)}/>}
+                <JoinRequestModal itemId={1} close={this.closeJoinModal.bind(this)} save={this.joinRequest.bind(this)}/>}
             </div>
         );
     }

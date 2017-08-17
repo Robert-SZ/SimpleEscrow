@@ -2,65 +2,73 @@ pragma solidity ^0.4.4;
 // We have to specify what version of compiler this code will compile with
 
 contract Escrow {
-function Escrow() {
-}
-  
+function Escrow() { }
+
   struct request {
     uint256 id;
     bytes32 title;
     uint amount;
     uint usedPercentage;
+    uint paticipantsCount;
     uint256[] reqProdPct;
     bytes32[] reqProdAddrB;
-    //address[] reqProdAddr;
   }
-  
-  mapping(uint256 => request) requests;
-  uint256 idCounter = 0;
-  
- //создать сделку
-  function createRequest(bytes32 title, uint256 amount) returns (uint256) {
-    //пусть вернет какой нибудь идентификатор, чтобы потом делать join по этому идентификатору
+
+  mapping(uint256 => request) public requests;
+  // создать сделку
+  // для процедур, работающих через транзакцию - ничего не возвращаем
+  function createRequest(bytes32 title, uint256 amount, uint256 id) {
     if (amount > 0) {
-      uint256 id = idCounter + 1;
-      idCounter = id;
-      requests[id].id = id;
-      requests[id].title = title;
-      requests[id].amount = amount;
-      requests[id].reqProdPct = new uint256[](0);
-      requests[id].reqProdAddrB = new bytes32[](0);
-      //requests[id].reqProdAddr = new address[](0);
-      return id;
+      requests[id] = request(
+          {
+              id: id,
+              title: title,
+              amount: amount,
+              usedPercentage: 0,
+              reqProdPct: new uint256[](0),
+              reqProdAddrB: new bytes32[](0),
+              paticipantsCount: 0
+          });
     }
-    return 0;
   }
-    
- // requestId- это ид созданный в функции createRequest
+  // requestId- это ид созданный в функции createRequest
   // value - это процент участия в сделке
-  function join(uint256 requestId, uint256 value) returns (uint256) {
-    if (requests[requestId].id > 0){
+  function join(uint256 requestId, uint256 value) {
+    if (requests[requestId].id > 0) {
       request storage req = requests[requestId];
-      
+
       if (req.usedPercentage + value <= 100) {
         req.reqProdPct.push(value);
         req.reqProdAddrB.push(bytes32(msg.sender));
-        return 1;
-        //req.reqProdAddr.push(tx.origin);
+        req.usedPercentage += value;
+        req.paticipantsCount ++;
       }
     }
-    return 0;
   }
- 
   //возвращает список участников по сделке
-  function getParticipants(uint256 requestId) returns (bytes32[] participantsList) {
+  function getParticipants(uint256 requestId) returns (bytes32[] partsLst) {
     if (requests[requestId].id > 0) {
       request storage req = requests[requestId];
-      participantsList = req.reqProdAddrB;
-      //participantsList = req.reqProdAddr;
+      partsLst = req.reqProdAddrB;
+      return partsLst;
     }
+    return new bytes32[](0);
   }
+  //возвращает список сделок
+  function getRequestsInfo() returns (uint256[] requestsList) {
+    requestsList = new uint256[](0);
+    uint256 i = 1;
+    while (requests[i].id > 0) {
+        var tmp = new uint256[](requestsList.length + 1);
+        for (uint j = 0; j < requestsList.length; j++)
+            tmp[j] = requestsList[j];
 
-  function test() returns (uint256){
-        return 42;
+        tmp[i-1] = requests[i].id;
+
+        requestsList = tmp;
+
+        i++;
+    }
+    return requestsList;
   }
 }

@@ -5,13 +5,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 class OrderItem extends React.Component {
+
+
+
     render() {
         const {item}=this.props;
         return (<tr>
             <td>{item.title}</td>
-            <td>{item.current+'/'+item.value}</td>
-            <td>{item.participants}</td>
-            <td>{item.current<item.value?<a href="#" onClick={this.props.join}>Join</a>:null}</td>
+            <td>{item.usedPercentage+'/'+item.amount}</td>
+            <td>{item.participantsCount}</td>
+            <td>{item.usedPercentage<100?<a href="#" onClick={this.props.join}>Join</a>:null}</td>
         </tr>)
     }
 }
