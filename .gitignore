@@ -1,0 +1,16 @@
+.DS_STORE
+node_modules
+build
+.module-cache
+*.log*
+_nogit
+.idea/
+Denis
+
+*.codekit
+markup/html
+markup/html_email
+markup/js
+markup/*.js
+markup/**/*.js
+
