@@ -1,4 +1,3 @@
-import abi from './abi';
 import {default as Web3} from 'web3';
 import {default as contract} from 'truffle-contract'
 
@@ -6,19 +5,19 @@ import escrow_artifacts from './Escrow.json'
 
 export default class Provider {
     constructor() {
-        this.contractAddress = '0xeF36bADE312B5c40feFd522d74Ce6BCeE856F2DE'
-        this.initMetamask();
+        this.contractAddress = '0xa052B600320D45f9C65555939847807b7E86a696';
     }
 
-    initMetamask() {
+    init() {
         this.metaMaskEnabled = false;
-        if (window.web3 !== 'undefined') {
+        if (window.web3) {
             window.web3 = new Web3(window.web3.currentProvider);
+
+            this.Escrow = contract(escrow_artifacts);
+            this.Escrow.setProvider(window.web3.currentProvider);
+
             this.metaMaskEnabled = true;
         }
-        this.Escrow = contract(escrow_artifacts);
-        this.Escrow.setProvider(window.web3.currentProvider);
-
         return this.metaMaskEnabled;
     }
 

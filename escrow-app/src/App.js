@@ -18,12 +18,7 @@ class App extends Component {
             apiProvider: false,
             orders: {
                 loader: false,
-                items: [{
-                    title: 'A',
-                    amount: '100',
-                    usedPercentage: '15',
-                    participantsCount: 3
-                }]
+                items: []
             },
             showModal: false,
             showJoinModal: false
@@ -31,9 +26,30 @@ class App extends Component {
         this.escrowService = new EscrowService();
     }
 
+    showLoader() {
+        this.setState({
+            orders: {
+                loader: true
+            }
+        });
+    }
+
+    stopLoader() {
+        this.setState({
+            orders: {
+                loader: false
+            }
+        });
+    }
+
     componentDidMount() {
-        //this.setState({metaMaskProvider: this.provider.initMetamask()});
-        this.fillOrders();
+        this.showLoader();
+        this.escrowService.init().then(() => {
+            this.stopLoader();
+            this.fillOrders();
+
+        });
+
     }
 
     fillOrders() {
@@ -61,11 +77,15 @@ class App extends Component {
         this.setState({showModal: false});
     }
 
+    handleError(error) {
+        console.error(error);
+    }
+
     createRequest(data) {
         this.closeModal();
-        this.escrowService.createRequest(data.title,data.value,1),then(result=>{
+        this.escrowService.createRequest(data.title, data.value, 2).then(result => {
             this.state.orders.items.push(data);
-        });
+        }).catch(this.handleError);
     }
 
     showJoinModal() {
@@ -90,10 +110,10 @@ class App extends Component {
                         item.participantsCount++;
                     }
                     this.setState({orders: {loader: false}});
-                }else {
+                } else {
                     //todo показать попап, что превышено число заявок
                 }
-            })
+            }).catch(this.handleError);
     }
 
 

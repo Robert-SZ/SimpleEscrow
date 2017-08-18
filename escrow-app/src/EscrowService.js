@@ -4,8 +4,24 @@ import Provider from './eth/provider';
 export default class EscrowService{
     constructor(){
         this.provider = new Provider();
+        this.providerInited = false;
     }
+
+    init(){
+        return new Promise((resolve, reject)=>{
+            let id = setInterval(()=>{
+                this.providerInited = this.provider.init();
+                if(this.providerInited){
+                    clearInterval(id);
+                    resolve();
+                }
+            }, 500);
+        });
+    }
+
     getOrders(){
+        if(!this.providerInited)
+            throw new Error('Provider must be inited. Please call init() before');
         return this.provider.getOrders();
     }
     join(id, amount){
