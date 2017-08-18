@@ -11,4 +11,7 @@ export default class EscrowService{
     join(id, amount){
         return this.provider.join(id, amount);
     }
+    createRequest(title, amount, id){
+        return this.provider.createRequest(title, amount, id);
+    }
 }

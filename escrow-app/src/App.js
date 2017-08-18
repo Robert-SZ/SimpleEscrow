@@ -63,7 +63,9 @@ class App extends Component {
 
     createRequest(data) {
         this.closeModal();
-        this.state.orders.push(data);
+        this.escrowService.createRequest(data.title,data.value,1),then(result=>{
+            this.state.orders.items.push(data);
+        });
     }
 
     showJoinModal() {
@@ -77,7 +79,21 @@ class App extends Component {
     joinRequest(data) {
         this.setState({orders: {loader: true}});
         this.closeJoinModal();
-        this.escrowService.join(data.)
+        this.escrowService.join(data.itemId, data.value)
+            .then((result) => {
+                if (result) {
+                    let item = this.state.orders.items.filter(item => {
+                        return item.id === data.itemId
+                    })[0];
+                    if (item) {
+                        item.usedPercentage += data.value;
+                        item.participantsCount++;
+                    }
+                    this.setState({orders: {loader: false}});
+                }else {
+                    //todo показать попап, что превышено число заявок
+                }
+            })
     }
 
 
@@ -114,7 +130,8 @@ class App extends Component {
                 {this.state.showModal &&
                 <CreateRequestModal close={this.closeModal.bind(this)} save={this.createRequest.bind(this)}/>}
                 {this.state.showJoinModal &&
-                <JoinRequestModal itemId={1} close={this.closeJoinModal.bind(this)} save={this.joinRequest.bind(this)}/>}
+                <JoinRequestModal itemId={1} close={this.closeJoinModal.bind(this)}
+                                  save={this.joinRequest.bind(this)}/>}
             </div>
         );
     }

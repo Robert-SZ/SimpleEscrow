@@ -39,13 +39,13 @@ class CreateRequestModal extends React.Component {
                     <div className="input-group">
                         <span className="input-group-addon" id="basic-addon1">Title</span>
                         <input value={this.state.title} onChange={this.handleTitle.bind(this)}
-                               type="text" id="input" placeholder="1T of potatoes" aria-describedby="basic-addon1"/>
+                               type="text" id="input" placeholder="1T of potatoes" aria-describedby="basic-addon1" required/>
                     </div>
                     <br/>
                     <div className="input-group">
                         <span className="input-group-addon">Escrowed required</span>
                         <input value={this.state.value} onChange={this.handleValue.bind(this)}
-                               type="text" id="input" placeholder="0"/>
+                               type="text" id="input" placeholder="0" required/>
                     </div>
                 </Modal.Body>
 

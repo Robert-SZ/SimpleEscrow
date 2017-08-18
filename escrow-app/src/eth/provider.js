@@ -6,7 +6,7 @@ import escrow_artifacts from './Escrow.json'
 
 export default class Provider {
     constructor() {
-        this.contractAddress = '0x054aacf26384a8e61775761775a6e41575db0f3d'
+        this.contractAddress = '0xeF36bADE312B5c40feFd522d74Ce6BCeE856F2DE'
         this.initMetamask();
     }
 
@@ -32,7 +32,7 @@ export default class Provider {
 
     getOrders() {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
-            return contractInstance.getOrders.call().then(function (data) {
+            return contractInstance.getRequestsInfo.call().then(function (data) {
                 return data.map(item => {
                     return {
                         id: item.id,
@@ -46,9 +46,17 @@ export default class Provider {
         });
     }
 
-    join(id, amount){
+    join(id, amount) {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
-            return contractInstance.join.call(id,amount).then(function (result) {
+            return contractInstance.join.call(id, amount).then(function (result) {
+                return true;
+            });
+        });
+    }
+
+    createRequest(title, amount, id) {
+        return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
+            return contractInstance.createRequest.call(title, amount, id).then(function (result) {
                 return true;
             });
         });
