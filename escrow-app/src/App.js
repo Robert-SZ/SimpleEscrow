@@ -119,11 +119,10 @@ class App extends Component {
 
     render() {
         const loader = <ProgressBar active now={100}/>;
+        const addNewRequestBtn = <a className="btn btn-primary" onClick={this.handleNewOrder.bind(this)}>Create a
+            request</a>;
         const ordersTable = <OrdersTable items={this.state.orders.items} join={this.showJoinModal.bind(this)}/>;
-        const emptyOrdersTable = <div><span>Orders list is empty. Please add new order</span> <a
-                                                                                                 className="btn btn-primary"
-                                                                                                 onClick={this.handleNewOrder.bind(this)}>Create
-            a request</a></div>;
+        const emptyOrdersTable = <div><span>Orders list is empty. Please add new order</span>{addNewRequestBtn}</div>;
         return (
             <div>
                 <section className="jumbotron text-center">
@@ -143,7 +142,10 @@ class App extends Component {
                     </div>
                 </section>
                 <div className="container">
-                    <div></div>
+                    <div className="col-6 text-right">
+                        {this.state.orders.items && this.state.orders.items.length > 0 && addNewRequestBtn}
+                        <p/>
+                    </div>
                     <div className="col-6 text-center">
                         {this.state.loader && loader}
                         {this.state.metaMask.init && <div><strong>Please wait while Metamask is inited</strong></div>}
@@ -152,10 +154,10 @@ class App extends Component {
                             before</strong>
                         </div>}
                     </div>
+                    <div className="col-6">
                     {this.state.orders.showEmpty && emptyOrdersTable}
                     {!this.state.loader && this.state.orders.items && this.state.orders.items.length > 0 && ordersTable}
-
-                    <div></div>
+                    </div>
                 </div>
 
                 {this.state.showModal &&
