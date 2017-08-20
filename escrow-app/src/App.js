@@ -25,7 +25,11 @@ class App extends Component {
                 items: []
             },
             showModal: false,
-            showJoinModal: false
+            joinModal: {
+                show: false,
+                id: undefined
+            }
+
         };
         this.escrowService = new EscrowService();
     }
@@ -41,8 +45,9 @@ class App extends Component {
     componentDidMount() {
         this.escrowService.init().then(() => {
             this.fillOrders();
-        }).catch(() => {
+        }).catch((error) => {
             this.setState({metaMask: {...this.state.metaMask, error: true}});
+            this.handleError(error);
         }).then(() => {
             this.setState({metaMask: {...this.state.metaMask, init: false}});
             this.stopLoader();
@@ -58,8 +63,8 @@ class App extends Component {
             } else {
                 this.setState({orders: {...this.state.orders, showEmpty: true}});
             }
-        }).catch(() => {
-            this.handleError()
+        }).catch((error) => {
+            this.handleError(error)
         }).then(() => {
             this.stopLoader()
         });
@@ -83,17 +88,20 @@ class App extends Component {
 
     createRequest(data) {
         this.closeModal();
-        this.escrowService.createRequest(data.title, data.value, 2).then(result => {
-            this.state.orders.items.push(data);
-        }).catch(this.handleError);
+        this.showLoader();
+        this.escrowService.createRequest(data.title, data.value).then(newRequest => {
+            this.state.orders.items.push(newRequest);
+        }).catch(this.handleError).then(() => {
+            this.stopLoader();
+        });
     }
 
-    showJoinModal() {
-        this.setState({showJoinModal: true});
+    showJoinModal(id) {
+        this.setState({joinModal: {...this.state.joinModal, id: id, show: true}});
     }
 
     closeJoinModal() {
-        this.setState({showJoinModal: false});
+        this.setState({joinModal: {...this.state.joinModal, id: undefined, show: false}});
     }
 
     joinRequest(data) {
@@ -106,8 +114,8 @@ class App extends Component {
                         return item.id === data.itemId
                     })[0];
                     if (item) {
-                        item.usedPercentage += data.value;
-                        item.participantsCount++;
+                        item.usedPercentage = +item.usedPercentage + (+data.value);
+                        item.paticipantsCount++;
                     }
                     this.stopLoader();
                 } else {
@@ -155,15 +163,15 @@ class App extends Component {
                         </div>}
                     </div>
                     <div className="col-6">
-                    {this.state.orders.showEmpty && emptyOrdersTable}
-                    {!this.state.loader && this.state.orders.items && this.state.orders.items.length > 0 && ordersTable}
+                        {this.state.orders.showEmpty && emptyOrdersTable}
+                        {!this.state.loader && this.state.orders.items && this.state.orders.items.length > 0 && ordersTable}
                     </div>
                 </div>
 
                 {this.state.showModal &&
                 <CreateRequestModal close={this.closeModal.bind(this)} save={this.createRequest.bind(this)}/>}
-                {this.state.showJoinModal &&
-                <JoinRequestModal itemId={1} close={this.closeJoinModal.bind(this)}
+                {this.state.joinModal.show &&
+                <JoinRequestModal itemId={this.state.joinModal.id} close={this.closeJoinModal.bind(this)}
                                   save={this.joinRequest.bind(this)}/>}
             </div>
         );

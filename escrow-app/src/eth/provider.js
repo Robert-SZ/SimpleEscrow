@@ -68,7 +68,10 @@ export default class Provider {
 
     join(id, amount) {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
-            return contractInstance.join.call(id, amount).then(function (result) {
+            let requestId = +id;
+            let value = +amount;
+            return contractInstance.join(requestId, value, {gas: 140000, from: window.web3.eth.accounts[0]}).then(function (result) {
+                console.dir(result);
                 return true;
             });
         });
@@ -76,8 +79,15 @@ export default class Provider {
 
     createRequest(title, amount, id) {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
-            return contractInstance.createRequest.call(title, amount, id).then(function (result) {
-                return true;
+            return contractInstance.createRequest(title, amount, id, {gas: 140000, from: window.web3.eth.accounts[0]}).then(function (result) {
+                console.dir(result);
+                return {
+                    id: id,
+                    title: title,
+                    amount: amount,
+                    usedPercentage: 0,
+                    paticipantsCount: 0
+                }
             });
         });
     }

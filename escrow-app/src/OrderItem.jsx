@@ -14,7 +14,7 @@ class OrderItem extends React.Component {
             <td>{item.title}</td>
             <td>{item.usedPercentage+'/'+item.amount}</td>
             <td>{item.paticipantsCount}</td>
-            <td>{item.usedPercentage<100?<a href="#" onClick={this.props.join}>Join</a>:null}</td>
+            <td>{item.usedPercentage<100?<a href="#" onClick={()=>{this.props.join(item.id)}}>Join</a>:null}</td>
         </tr>)
     }
 }
