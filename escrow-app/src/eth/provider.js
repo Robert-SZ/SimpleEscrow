@@ -30,18 +30,39 @@ export default class Provider {
     }
 
     getOrders() {
-        return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
-            return contractInstance.getRequestsInfo.call().then(function (data) {
+        return this.Escrow.at(this.contractAddress).then(contractInstance => {
+            return contractInstance.getRequestsInfo.call().then((data) => {
                 return data.map(item => {
-                    return {
-                        id: item.id,
-                        title: item.title,
-                        amount: item.amount,
-                        usedPercentage: item.usedPercentage,
-                        participantsCount: item.participantsCount
-                    }
+                    return item.c[0]
                 });
             });
+        }).then(ids => {
+            return this.Escrow.at(this.contractAddress).then(contractInstance => {
+                return new Promise((resolve, reject) => {
+                    let result = [];
+                    let idsCount = 0;
+                    ids.forEach(id => {
+                        contractInstance.requests.call(id).then(data => {
+                            let element = {
+                                id: data[0].c[0],
+                                title: window.web3.toAscii(data[1]),
+                                amount: data[2].c[0],
+                                usedPercentage: data[3].c[0],
+                                paticipantsCount: data[4].c[0],
+                            };
+                            result.push(element);
+                            idsCount++;
+                            if (idsCount === ids.length) {
+                                resolve(result);
+                            }
+                        }).catch(error => {
+                            reject(error);
+                        })
+                    });
+
+                });
+
+            })
         });
     }
 

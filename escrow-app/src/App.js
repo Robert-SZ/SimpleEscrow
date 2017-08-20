@@ -14,10 +14,14 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
-            metaMaskProvider: true,
+            loader: true,
+            metaMask: {
+                init: true,
+                error: false
+            },
             apiProvider: false,
             orders: {
-                loader: false,
+                showEmpty: false,
                 items: []
             },
             showModal: false,
@@ -27,42 +31,38 @@ class App extends Component {
     }
 
     showLoader() {
-        this.setState({
-            orders: {
-                loader: true
-            }
-        });
+        this.setState({loader: true});
     }
 
     stopLoader() {
-        this.setState({
-            orders: {
-                loader: false
-            }
-        });
+        this.setState({loader: false});
     }
 
     componentDidMount() {
-        this.showLoader();
         this.escrowService.init().then(() => {
-            this.stopLoader();
             this.fillOrders();
-
+        }).catch(() => {
+            this.setState({metaMask: {...this.state.metaMask, error: true}});
+        }).then(() => {
+            this.setState({metaMask: {...this.state.metaMask, init: false}});
+            this.stopLoader();
         });
 
     }
 
     fillOrders() {
+        this.showLoader();
         this.escrowService.getOrders().then(items => {
-            this.setState({
-                orders: {
-                    loader: false,
-                    items: items
-                }
-            });
-        }).catch(error => {
-            console.error(error);
-        })
+            if (items && items.length > 0) {
+                this.setState({orders: {...this.state.orders, showEmpty: false, items: items}})
+            } else {
+                this.setState({orders: {...this.state.orders, showEmpty: true}});
+            }
+        }).catch(() => {
+            this.handleError()
+        }).then(() => {
+            this.stopLoader()
+        });
     }
 
     handleClickMetamask() {
@@ -97,7 +97,7 @@ class App extends Component {
     }
 
     joinRequest(data) {
-        this.setState({orders: {loader: true}});
+        this.showLoader();
         this.closeJoinModal();
         this.escrowService.join(data.itemId, data.value)
             .then((result) => {
@@ -109,7 +109,7 @@ class App extends Component {
                         item.usedPercentage += data.value;
                         item.participantsCount++;
                     }
-                    this.setState({orders: {loader: false}});
+                    this.stopLoader();
                 } else {
                     //todo показать попап, что превышено число заявок
                 }
@@ -118,34 +118,45 @@ class App extends Component {
 
 
     render() {
+        const loader = <ProgressBar active now={100}/>;
+        const ordersTable = <OrdersTable items={this.state.orders.items} join={this.showJoinModal.bind(this)}/>;
+        const emptyOrdersTable = <div><span>Orders list is empty. Please add new order</span> <a
+                                                                                                 className="btn btn-primary"
+                                                                                                 onClick={this.handleNewOrder.bind(this)}>Create
+            a request</a></div>;
         return (
             <div>
                 <section className="jumbotron text-center">
                     <div className="container">
-                        <h1 className="jumbotron-heading">Escrow example</h1>
-                        <p className="lead text-muted">It's an example web applicarin to demonstrate smart-contracts
+                        <h1 className="jumbotron-heading">The Escrow example</h1>
+                        <p className="lead text-muted">It's an example of the web application to demonstrate
+                            smart-contracts
                             functionality.</p>
-                        <p>
-                            <a href="#" className="btn btn-primary" onClick={this.handleClickMetamask.bind(this)}
-                               disabled={!this.state.metaMaskProvider}>Use
-                                Metamask</a>
-                            <a href="#" className="btn btn-secondary" disabled={!this.state.metaMaskProvider}>Use
-                                API</a>
-                        </p>
+                        {/*<p>*/}
+                        {/*<a href="#" className="btn btn-primary" onClick={this.handleClickMetamask.bind(this)}*/}
+                        {/*disabled={!this.state.metaMaskProvider}>Use*/}
+                        {/*Metamask</a>*/}
+                        {/*<a href="#" className="btn btn-secondary" disabled={!this.state.metaMaskProvider}>Use*/}
+                        {/*API</a>*/}
+                        {/*</p>*/}
 
                     </div>
                 </section>
-                {this.state.orders.loader && <div>
-                    <div><ProgressBar active now={100}/></div>
-                    <div>Loading...</div>
-                </div>}
-                {!this.state.orders.loader &&
                 <div className="container">
-                    {this.state.orders.items && this.state.orders.items.length > 0 ?
-                        <OrdersTable items={this.state.orders.items} join={this.showJoinModal.bind(this)}/> :
-                        <div><span>Orders list is empty. Please add new order</span>
-                            <a href="#" className="btn btn-primary" onClick={this.handleNewOrder.bind(this)}>Create a
-                                request</a></div>}</div>}
+                    <div></div>
+                    <div className="col-6 text-center">
+                        {this.state.loader && loader}
+                        {this.state.metaMask.init && <div><strong>Please wait while Metamask is inited</strong></div>}
+                        {this.state.metaMask.error &&
+                        <div className="text-danger"><strong>Can't init Metamask. Please install Metamask
+                            before</strong>
+                        </div>}
+                    </div>
+                    {this.state.orders.showEmpty && emptyOrdersTable}
+                    {!this.state.loader && this.state.orders.items && this.state.orders.items.length > 0 && ordersTable}
+
+                    <div></div>
+                </div>
 
                 {this.state.showModal &&
                 <CreateRequestModal close={this.closeModal.bind(this)} save={this.createRequest.bind(this)}/>}

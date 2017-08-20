@@ -10,7 +10,7 @@ import {Table} from 'react-bootstrap'
 class OrdersTable extends React.Component {
     render() {
         const items = this.props.items.map(item =>
-            <OrderItem item={item} join={this.props.join}/>
+            <OrderItem key={item.id} item={item} join={this.props.join}/>
         );
         return (<Table striped bordered condensed hover>
             <thead>

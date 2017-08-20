@@ -5,11 +5,16 @@ export default class EscrowService{
     constructor(){
         this.provider = new Provider();
         this.providerInited = false;
+        this.providerInitCount = 0;
     }
 
     init(){
         return new Promise((resolve, reject)=>{
             let id = setInterval(()=>{
+                if(this.providerInited>5){
+                    reject();
+                }
+                this.providerInitCount++;
                 this.providerInited = this.provider.init();
                 if(this.providerInited){
                     clearInterval(id);
