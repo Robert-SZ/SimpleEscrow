@@ -127,7 +127,7 @@ class App extends Component {
         let reason = processMetaMaskError(error);
         if (reason) {
             this.setState({metaMask: {...this.state.metaMask, errorText: reason}});
-        }else {
+        } else {
             this.setState({metaMask: {...this.state.metaMask, errorText: error.message}});
         }
         setTimeout(() => {
@@ -144,17 +144,25 @@ class App extends Component {
         this.showLoader();
         this.closeModal();
         this.hideSuccessfullyAddedBlock();
-        this.escrowService.createRequest(data.title, data.value).then(newRequest => {
-            this.state.orders.items.push(newRequest);
-            this.setState({
-                orders: {
-                    ...this.state.orders,
-                    showEmpty: false,
-                    successfullyAdded: true,
-                    items: this.state.orders.items
+        this.escrowService.createRequest(data.title, data.value)
+            .then(result => {
+                let errorText = this.processMetaMaskResult(result.resultCode);
+                if (result.resultCode !== 10) {
+                    throw new Error(errorText);
                 }
+                return result;
             })
-        }).catch((error) => {
+            .then(newRequest => {
+                this.state.orders.items.push(newRequest);
+                this.setState({
+                    orders: {
+                        ...this.state.orders,
+                        showEmpty: false,
+                        successfullyAdded: true,
+                        items: this.state.orders.items
+                    }
+                })
+            }).catch((error) => {
             this.handleError(error)
         }).then(() => {
             this.stopLoader();

@@ -93,14 +93,14 @@ export default class Provider {
         return this.Escrow.at(this.contractAddress).then((contractInstance) => {
             let requestId = +id;
             let value = +amount;
+            let from = window.web3.eth.accounts[0];
             return contractInstance.join(requestId, value, {
                 gas: 240000,
-                from: window.web3.eth.accounts[0]
+                from: from
             }).then((result) => {
                 console.dir(result);
-                let transactionHash = result.tx;
                 return this.Escrow.at(this.contractAddress).then(contractInstance => {
-                    return contractInstance.txlog.call(transactionHash).then(data => {
+                    return contractInstance.txlog.call(from).then(data => {
                         let resultCode = data.c[0];
                         return resultCode;
                     });
@@ -117,19 +117,28 @@ export default class Provider {
      * @returns {Promise.<TResult>|*|{anyOf}}
      */
     createRequest(title, amount, id) {
-        return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
+        return this.Escrow.at(this.contractAddress).then((contractInstance) => {
+            let from = window.web3.eth.accounts[0];
             return contractInstance.createRequest(title, amount, id, {
                 gas: 240000,
-                from: window.web3.eth.accounts[0]
-            }).then(function (result) {
+                from: from
+            }).then((result) => {
                 console.dir(result);
-                return {
+                let resultObject = {
                     id: id,
                     title: title,
                     amount: amount,
                     usedPercentage: 0,
                     paticipantsCount: 0
-                }
+                };
+                return this.Escrow.at(this.contractAddress).then(contractInstance => {
+                    return contractInstance.txlog.call(from).then(data => {
+                        let resultCode = data.c[0];
+                        resultObject.resultCode = resultCode;
+                        return resultObject;
+                    });
+                });
+
             });
         });
     }
