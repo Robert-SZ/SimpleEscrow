@@ -19,7 +19,7 @@ export default class Provider {
          * Address of contract which was deployed to Ropsten
          * @type {string}
          */
-        this.contractAddress = '0xEdd14C80C647175672b95A445E6AAbA4b2424A80';
+        this.contractAddress = '0xfd816Fa6DEfA8fe50c42c3EB56843C95876D3334';
     }
 
     /**

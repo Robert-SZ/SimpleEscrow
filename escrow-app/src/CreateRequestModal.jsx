@@ -47,13 +47,13 @@ class CreateRequestModal extends React.Component {
                         <div className="input-group">
                             <span className="input-group-addon" id="basic-addon2">Escrowed amount(eth):</span>
                             <input value={this.state.value} onChange={this.handleValue.bind(this)}
-                                   type="number" min={1} max={100} id="input" placeholder="0" pattern="\d+" required aria-describedby="basic-addon2"/>
+                                   type="text" id="input" placeholder="0" pattern="\d+" required aria-describedby="basic-addon2"/>
                         </div>
                     </Modal.Body>
 
                     <Modal.Footer>
                         <Button onClick={this.props.close}>Close</Button>
-                        <Button bsStyle="primary" type="submit">Save changes</Button>
+                        <Button bsStyle="primary" type="submit">Create request</Button>
                     </Modal.Footer>
                 </form>
             </Modal.Dialog>

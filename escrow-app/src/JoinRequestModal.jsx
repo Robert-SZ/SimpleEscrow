@@ -33,7 +33,7 @@ class JoinRequestModal extends React.Component {
                         <div className="input-group">
                             <span className="input-group-addon" id="basic-addon1">%</span>
                             <input value={this.state.title} onChange={this.handleValue.bind(this)}
-                                   type="text" id="input" placeholder="10" aria-describedby="basic-addon1" required/>
+                                   type="number" min={1} max={100} id="input" placeholder="10" aria-describedby="basic-addon1" required/>
                         </div>
                     </Modal.Body>
 
