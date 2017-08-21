@@ -3,11 +3,29 @@ import {default as contract} from 'truffle-contract'
 
 import escrow_artifacts from './Escrow.json'
 
+function sortOrders(item1, item2) {
+    if(item2.id>item1.id){
+        return -1;
+    }
+    return 1;
+}
+
+/**
+ * This class provide access functions to Etherium test network(Ropsten)
+ */
 export default class Provider {
     constructor() {
+        /**
+         * Address of contract which was deployed to Ropsten
+         * @type {string}
+         */
         this.contractAddress = '0xa052B600320D45f9C65555939847807b7E86a696';
     }
 
+    /**
+     * Function checks installation of Metamask
+     * @returns {boolean}
+     */
     init() {
         this.metaMaskEnabled = false;
         if (window.web3) {
@@ -21,14 +39,10 @@ export default class Provider {
         return this.metaMaskEnabled;
     }
 
-    getParticipants() {
-        this.Escrow.at(this.contractAddress).then(function (contractInstance) {
-            return contractInstance.test.call().then(function (data, data2) {
-                console.dir(data);
-            });
-        });
-    }
-
+    /**
+     * Get array of requests
+     * @returns {Promise.<TResult>}
+     */
     getOrders() {
         return this.Escrow.at(this.contractAddress).then(contractInstance => {
             return contractInstance.getRequestsInfo.call().then((data) => {
@@ -53,7 +67,7 @@ export default class Provider {
                             result.push(element);
                             idsCount++;
                             if (idsCount === ids.length) {
-                                resolve(result);
+                                resolve(result.sort(sortOrders));
                             }
                         }).catch(error => {
                             reject(error);
@@ -66,6 +80,12 @@ export default class Provider {
         });
     }
 
+    /**
+     * Join Seller to Buyers request
+     * @param id
+     * @param amount
+     * @returns {Promise.<TResult>|*|{anyOf}}
+     */
     join(id, amount) {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
             let requestId = +id;
@@ -77,6 +97,13 @@ export default class Provider {
         });
     }
 
+    /**
+     * Create request for delivery
+     * @param title
+     * @param amount
+     * @param id
+     * @returns {Promise.<TResult>|*|{anyOf}}
+     */
     createRequest(title, amount, id) {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
             return contractInstance.createRequest(title, amount, id, {gas: 140000, from: window.web3.eth.accounts[0]}).then(function (result) {
