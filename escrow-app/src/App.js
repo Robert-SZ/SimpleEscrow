@@ -10,7 +10,7 @@ import JoinRequestModal from './JoinRequestModal'
 
 
 function processMetaMaskError(error) {
-    if (error.message.indexOf('MetaMask') > -1) {
+    if (error && error.message.indexOf('MetaMask') > -1) {
         let errorReason = error.message.split('at')[0];
         if (errorReason) {
             return errorReason;
@@ -198,7 +198,7 @@ class App extends Component {
                         {this.state.loader && loader}
                         {this.state.metaMask.init && <div><strong>Please wait while Metamask is inited</strong></div>}
                         {this.state.metaMask.error &&
-                        <div className="text-danger"><strong>Can't init Metamask. Please install Metamask
+                        <div className="text-danger"><strong>Can't init Metamask. Please install <a href="https://metamask.io/">Metamask </a>
                             before</strong>
                         </div>}
                     </div>

@@ -19,7 +19,7 @@ export default class EscrowService {
     init() {
         return new Promise((resolve, reject) => {
             let id = setInterval(() => {
-                if (this.providerInited > 5) {
+                if (this.providerInitCount > 5) {
                     reject();
                 }
                 this.providerInitCount++;
