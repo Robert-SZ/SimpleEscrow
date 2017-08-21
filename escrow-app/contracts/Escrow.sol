@@ -18,8 +18,8 @@ function Escrow() { }
   // создать сделку
   // для процедур, работающих через транзакцию - ничего не возвращаем
   function createRequest(bytes32 title, uint256 amount, uint256 id) {
-    if (id <=0 || requests[id].id > 0 || amount <= 0) {
-        revert();
+    if (id <=0 || amount <= 0 || requests[id].id == 0) {
+        throw;
     }
       
     requests[id] = request({
@@ -36,7 +36,10 @@ function Escrow() { }
   // requestId- это ид созданный в функции createRequest
   // value - это процент участия в сделке
   function join(uint256 requestId, uint256 value) {
-    if (requests[requestId].id > 0) {
+    if (requestId <=0 || value <= 0 || requests[requestId].id == 0) {
+        throw;
+    }
+
       request storage req = requests[requestId];
 
       if (req.usedPercentage + value <= 100) {
@@ -45,9 +48,9 @@ function Escrow() { }
         req.usedPercentage += value;
         req.paticipantsCount ++;
       }
-      revert();
-    }
-    revert();
+      else {
+          throw;
+      }
   }
   
   //возвращает список участников по сделке
