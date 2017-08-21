@@ -10,7 +10,7 @@ class CreateRequestModal extends React.Component {
         super(props);
         this.state = {
             title: '',
-            value: 0,
+            value: '',
             current: 0,
             participants: 0
         }
@@ -24,8 +24,9 @@ class CreateRequestModal extends React.Component {
         this.setState({value: event.target.value});
     }
 
-    handleSave() {
+    handleSave(event) {
         this.props.save(this.state);
+        event.preventDefault();
     }
 
     render() {
@@ -46,7 +47,7 @@ class CreateRequestModal extends React.Component {
                         <div className="input-group">
                             <span className="input-group-addon" id="basic-addon2">Escrowed amount(eth):</span>
                             <input value={this.state.value} onChange={this.handleValue.bind(this)}
-                                   type="text" id="input" placeholder="0" pattern="\d+" required aria-describedby="basic-addon2"/>
+                                   type="number" min={1} max={100} id="input" placeholder="0" pattern="\d+" required aria-describedby="basic-addon2"/>
                         </div>
                     </Modal.Body>
 

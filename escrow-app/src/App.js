@@ -170,15 +170,14 @@ class App extends Component {
                                          onClick={this.handleNewOrder.bind(this)}>Create a
             request</button>;
         const ordersTable = <OrdersTable items={this.state.orders.items} join={this.showJoinModal.bind(this)}/>;
-        const emptyOrdersTable = <div><span>Orders list is empty. Please add new order</span>{addNewRequestBtn}</div>;
+        const emptyOrdersTable = <div className="col-6 text-center"><strong>Orders list is empty. Please add a new order.&nbsp;</strong>{addNewRequestBtn}</div>;
         return (
             <div>
                 <section className="jumbotron text-center">
                     <div className="container">
                         <h1 className="jumbotron-heading">The Escrow example</h1>
                         <p className="lead text-muted">It's an example of the web application to demonstrate
-                            smart-contracts
-                            functionality.</p>
+                           the demo escrow smart-contracts.</p>
                         {/*<p>*/}
                         {/*<a href="#" className="btn btn-primary" onClick={this.handleClickMetamask.bind(this)}*/}
                         {/*disabled={!this.state.metaMaskProvider}>Use*/}

@@ -4,7 +4,7 @@ import {default as contract} from 'truffle-contract'
 import escrow_artifacts from './Escrow.json'
 
 function sortOrders(item1, item2) {
-    if(item2.id>item1.id){
+    if (item2.id > item1.id) {
         return -1;
     }
     return 1;
@@ -19,7 +19,7 @@ export default class Provider {
          * Address of contract which was deployed to Ropsten
          * @type {string}
          */
-        this.contractAddress = '0xa052B600320D45f9C65555939847807b7E86a696';
+        this.contractAddress = '0xEdd14C80C647175672b95A445E6AAbA4b2424A80';
     }
 
     /**
@@ -55,6 +55,9 @@ export default class Provider {
                 return new Promise((resolve, reject) => {
                     let result = [];
                     let idsCount = 0;
+                    if (!ids || ids.length === 0) {
+                        resolve([]);
+                    }
                     ids.forEach(id => {
                         contractInstance.requests.call(id).then(data => {
                             let element = {
@@ -90,7 +93,10 @@ export default class Provider {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
             let requestId = +id;
             let value = +amount;
-            return contractInstance.join(requestId, value, {gas: 140000, from: window.web3.eth.accounts[0]}).then(function (result) {
+            return contractInstance.join(requestId, value, {
+                gas: 140000,
+                from: window.web3.eth.accounts[0]
+            }).then(function (result) {
                 console.dir(result);
                 return true;
             });
@@ -106,7 +112,10 @@ export default class Provider {
      */
     createRequest(title, amount, id) {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
-            return contractInstance.createRequest(title, amount, id, {gas: 140000, from: window.web3.eth.accounts[0]}).then(function (result) {
+            return contractInstance.createRequest(title, amount, id, {
+                gas: 140000,
+                from: window.web3.eth.accounts[0]
+            }).then(function (result) {
                 console.dir(result);
                 return {
                     id: id,
