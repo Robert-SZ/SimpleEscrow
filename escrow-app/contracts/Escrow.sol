@@ -15,13 +15,25 @@ function Escrow() { }
   }
 
   mapping(uint256 => request) public requests;
+  mapping(address => uint) public txlog;
   // создать сделку
   // для процедур, работающих через транзакцию - ничего не возвращаем
   function createRequest(bytes32 title, uint256 amount, uint256 id) {
-    if (id <=0 || amount <= 0 || requests[id].id == 0) {
-        throw;
+    if (id <= 0){
+        txlog[msg.sender] = 1;
+        return;
     }
-      
+    
+    if (amount <= 0){
+        txlog[msg.sender] = 2;
+        return;
+    }
+    
+    if (requests[id].id > 0){
+        txlog[msg.sender] = 3;
+        return;
+    }
+    
     requests[id] = request({
         id: id,
         title: title,
@@ -31,26 +43,47 @@ function Escrow() { }
         reqProdAddrB: new bytes32[](0),
         paticipantsCount: 0
     });
+    
+    txlog[msg.sender] = 10;
   }
   
   // requestId- это ид созданный в функции createRequest
   // value - это процент участия в сделке
   function join(uint256 requestId, uint256 value) {
-    if (requestId <=0 || value <= 0 || requests[requestId].id == 0) {
-        throw;
+    if (requestId <= 0){
+        txlog[msg.sender] = 1;
+        return;
+    }
+    
+    if (value <= 0){
+        txlog[msg.sender] = 4;
+        return;
+    }
+    
+    if (value > 100){
+        txlog[msg.sender] = 5;
+        return;
     }
 
-      request storage req = requests[requestId];
+    request storage req = requests[requestId];
+    
+    if (req.id <= 0){
+        txlog[msg.sender] = 6;
+        return;
+    }
 
-      if (req.usedPercentage + value <= 100) {
-        req.reqProdPct.push(value);
-        req.reqProdAddrB.push(bytes32(msg.sender));
-        req.usedPercentage += value;
-        req.paticipantsCount ++;
-      }
-      else {
-          throw;
-      }
+
+    if (req.usedPercentage + value > 100){
+        txlog[msg.sender] = 7;
+        return;
+    }
+
+    req.reqProdPct.push(value);
+    req.reqProdAddrB.push(bytes32(msg.sender));
+    req.usedPercentage += value;
+    req.paticipantsCount ++;
+    
+    txlog[msg.sender] = 10;
   }
   
   //возвращает список участников по сделке
