@@ -14,10 +14,17 @@ function Escrow() { }
     bytes32[] reqProdAddrB;
   }
 
+  // main requests storage
   mapping(uint256 => request) public requests;
+  // transaction results storage
   mapping(address => uint) public txlog;
-  // создать сделку
-  // для процедур, работающих через транзакцию - ничего не возвращаем
+
+  // create deal
+  // contract implements publish requests to blockchain
+  // Transaction execution result are logged to txlog
+  // title  -  a short description
+  // amount - amount of money (eth) to be put by each side to escrow
+  // id - deal id, generate outside. Required to get deal info later.
   function createRequest(bytes32 title, uint256 amount, uint256 id) {
     if (id <= 0){
         txlog[msg.sender] = 1;
@@ -46,9 +53,11 @@ function Escrow() { }
     
     txlog[msg.sender] = 10;
   }
-  
-  // requestId- это ид созданный в функции createRequest
-  // value - это процент участия в сделке
+
+  // Allow to join sellers to the request with checking of edge cases
+  // Transaction execution result are logged to txlog
+  // requestId- id created in createRequest function
+  // value - participating value offered by seller
   function join(uint256 requestId, uint256 value) {
     if (requestId <= 0){
         txlog[msg.sender] = 1;
@@ -86,7 +95,7 @@ function Escrow() { }
     txlog[msg.sender] = 10;
   }
   
-  //возвращает список участников по сделке
+  //not used
   function getParticipants(uint256 requestId) returns (bytes32[] partsLst) {
     if (requests[requestId].id > 0) {
       request storage req = requests[requestId];
@@ -96,7 +105,7 @@ function Escrow() { }
     return new bytes32[](0);
   }
   
-  //возвращает список сделок
+  //returns deals ids list
   function getRequestsInfo() returns (uint256[] requestsList) {
     requestsList = new uint256[](0);
     uint256 i = 1;
