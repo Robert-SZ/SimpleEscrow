@@ -38,7 +38,7 @@ class JoinRequestModal extends React.Component {
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <button className="btn btn-secondary" onClick={this.props.close}>Close</button>
+                        <button className="btn btn-secondary" onClick={this.props.close}>Cancel</button>
                         <button className="btn btn-primary" type="submit">Join</button>
                     </Modal.Footer>
                 </form>

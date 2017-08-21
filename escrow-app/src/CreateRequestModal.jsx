@@ -6,17 +6,17 @@ import PropTypes from 'prop-types';
 import {Modal, Button} from 'react-bootstrap';
 
 class CreateRequestModal extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             title: '',
             value: 0,
-            current:0,
-            participants:0
+            current: 0,
+            participants: 0
         }
     }
 
-    handleTitle(event){
+    handleTitle(event) {
         this.setState({title: event.target.value});
     }
 
@@ -24,7 +24,7 @@ class CreateRequestModal extends React.Component {
         this.setState({value: event.target.value});
     }
 
-    handleSave(){
+    handleSave() {
         this.props.save(this.state);
     }
 
@@ -32,28 +32,29 @@ class CreateRequestModal extends React.Component {
         return (<div className="static-modal">
             <Modal.Dialog>
                 <Modal.Header>
-                    <Modal.Title>Create request</Modal.Title>
+                    <Modal.Title>Create a request</Modal.Title>
                 </Modal.Header>
+                <form onSubmit={this.handleSave.bind(this)}>
+                    <Modal.Body>
+                        <div className="input-group">
+                            <span className="input-group-addon" id="basic-addon1">Title</span>
+                            <input value={this.state.title} onChange={this.handleTitle.bind(this)}
+                                   type="text" id="input" placeholder="1T of potatoes" aria-describedby="basic-addon1"
+                                   required/>
+                        </div>
+                        <br/>
+                        <div className="input-group">
+                            <span className="input-group-addon" id="basic-addon2">Escrowed amount(eth):</span>
+                            <input value={this.state.value} onChange={this.handleValue.bind(this)}
+                                   type="text" id="input" placeholder="0" pattern="\d+" required aria-describedby="basic-addon2"/>
+                        </div>
+                    </Modal.Body>
 
-                <Modal.Body>
-                    <div className="input-group">
-                        <span className="input-group-addon" id="basic-addon1">Title</span>
-                        <input value={this.state.title} onChange={this.handleTitle.bind(this)}
-                               type="text" id="input" placeholder="1T of potatoes" aria-describedby="basic-addon1" required/>
-                    </div>
-                    <br/>
-                    <div className="input-group">
-                        <span className="input-group-addon">Escrowed required</span>
-                        <input value={this.state.value} onChange={this.handleValue.bind(this)}
-                               type="text" id="input" placeholder="0" required/>
-                    </div>
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button onClick={this.props.close}>Close</Button>
-                    <Button bsStyle="primary" onClick={this.handleSave.bind(this)}>Save changes</Button>
-                </Modal.Footer>
-
+                    <Modal.Footer>
+                        <Button onClick={this.props.close}>Close</Button>
+                        <Button bsStyle="primary" type="submit">Save changes</Button>
+                    </Modal.Footer>
+                </form>
             </Modal.Dialog>
         </div>)
     }

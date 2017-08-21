@@ -9,6 +9,16 @@ import CreateRequestModal from './CreateRequestModal';
 import JoinRequestModal from './JoinRequestModal'
 
 
+function processMetaMaskError(error) {
+    if (error.message.indexOf('MetaMask') > -1) {
+        let errorReason = error.message.split('at')[0];
+        if (errorReason) {
+            return errorReason;
+        }
+    }
+    return null;
+}
+
 class App extends Component {
 
     constructor() {
@@ -17,12 +27,14 @@ class App extends Component {
             loader: true,
             metaMask: {
                 init: true,
-                error: false
+                error: false,
+                errorText: undefined
             },
             apiProvider: false,
             orders: {
                 showEmpty: false,
-                items: []
+                items: [],
+                successfullyAdded: false
             },
             showModal: false,
             joinModal: {
@@ -70,10 +82,6 @@ class App extends Component {
         });
     }
 
-    handleClickMetamask() {
-        this.provider.getParticipants();
-    }
-
     handleNewOrder() {
         this.setState({showModal: true});
     }
@@ -82,16 +90,39 @@ class App extends Component {
         this.setState({showModal: false});
     }
 
+
     handleError(error) {
+        let reason = processMetaMaskError(error);
+        if (reason) {
+            this.setState({metaMask: {...this.state.metaMask, errorText: reason}});
+        }
+        setTimeout(() => {
+            this.handleHideError()
+        }, 5000);
         console.error(error);
     }
 
+    hideSuccessfullyAddedBlock() {
+        this.setState({orders: {...this.state.orders, successfullyAdded: false}})
+    }
+
     createRequest(data) {
-        this.closeModal();
         this.showLoader();
+        this.closeModal();
+        this.hideSuccessfullyAddedBlock();
         this.escrowService.createRequest(data.title, data.value).then(newRequest => {
             this.state.orders.items.push(newRequest);
-        }).catch(this.handleError).then(() => {
+            this.setState({
+                orders: {
+                    ...this.state.orders,
+                    showEmpty: false,
+                    successfullyAdded: true,
+                    items: this.state.orders.items
+                }
+            })
+        }).catch((error) => {
+            this.handleError(error)
+        }).then(() => {
             this.stopLoader();
         });
     }
@@ -107,6 +138,7 @@ class App extends Component {
     joinRequest(data) {
         this.showLoader();
         this.closeJoinModal();
+        this.hideSuccessfullyAddedBlock();
         this.escrowService.join(data.itemId, data.value)
             .then((result) => {
                 if (result) {
@@ -121,14 +153,22 @@ class App extends Component {
                 } else {
                     //todo показать попап, что превышено число заявок
                 }
-            }).catch(this.handleError);
+            }).catch((error) => {
+            this.handleError(error)
+        }).then(() => {
+            this.stopLoader();
+        });
     }
 
+    handleHideError() {
+        this.setState({metaMask: {...this.state.metaMask, errorText: null}});
+    }
 
     render() {
         const loader = <ProgressBar active now={100}/>;
-        const addNewRequestBtn = <a className="btn btn-primary" onClick={this.handleNewOrder.bind(this)}>Create a
-            request</a>;
+        const addNewRequestBtn = <button className="btn btn-primary" disabled={this.state.loader}
+                                         onClick={this.handleNewOrder.bind(this)}>Create a
+            request</button>;
         const ordersTable = <OrdersTable items={this.state.orders.items} join={this.showJoinModal.bind(this)}/>;
         const emptyOrdersTable = <div><span>Orders list is empty. Please add new order</span>{addNewRequestBtn}</div>;
         return (
@@ -166,6 +206,21 @@ class App extends Component {
                         {this.state.orders.showEmpty && emptyOrdersTable}
                         {!this.state.loader && this.state.orders.items && this.state.orders.items.length > 0 && ordersTable}
                     </div>
+                    {this.state.metaMask.errorText &&
+                    <div className="col-6 alert alert-danger" role="alert" onClick={this.handleHideError.bind(this)}>
+                        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>Error:&nbsp;</strong>{this.state.metaMask.errorText}
+                    </div>}
+                    {this.state.orders.successfullyAdded &&
+                    <div className="col-6 alert alert-success" role="alert"
+                         onClick={this.hideSuccessfullyAddedBlock.bind(this)}>
+                        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>Well done!&nbsp;</strong>New request has been added
+                    </div>}
                 </div>
 
                 {this.state.showModal &&
@@ -173,6 +228,7 @@ class App extends Component {
                 {this.state.joinModal.show &&
                 <JoinRequestModal itemId={this.state.joinModal.id} close={this.closeJoinModal.bind(this)}
                                   save={this.joinRequest.bind(this)}/>}
+
             </div>
         );
     }
