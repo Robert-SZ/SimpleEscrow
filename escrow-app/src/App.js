@@ -90,11 +90,45 @@ class App extends Component {
         this.setState({showModal: false});
     }
 
+    processMetaMaskResult(code) {
+        let reason = undefined;
+        switch (code.toString()) {
+            case '0':
+                reason = 'Tx has not mined yet';
+                break;
+            case '1':
+                reason = 'Invalid request Id';
+                break;
+            case '2':
+                reason = 'Amount less then zero';
+                break;
+            case '3':
+                reason = 'Request with this Id has already registred';
+                break;
+            case '4':
+                reason = 'Join amount less then zero';
+                break;
+            case '5':
+                reason = 'Join amount grater then 100';
+                break;
+            case '6':
+                reason = 'Request not found';
+                break;
+            case '7':
+                reason = 'Request amount limit exceed';
+                break;
+            default:
+                reason = 'OK';
+        }
+        return reason;
+    }
 
     handleError(error) {
         let reason = processMetaMaskError(error);
         if (reason) {
             this.setState({metaMask: {...this.state.metaMask, errorText: reason}});
+        }else {
+            this.setState({metaMask: {...this.state.metaMask, errorText: error.message}});
         }
         setTimeout(() => {
             this.handleHideError()
@@ -140,19 +174,21 @@ class App extends Component {
         this.closeJoinModal();
         this.hideSuccessfullyAddedBlock();
         this.escrowService.join(data.itemId, data.value)
-            .then((result) => {
-                if (result) {
-                    let item = this.state.orders.items.filter(item => {
-                        return item.id === data.itemId
-                    })[0];
-                    if (item) {
-                        item.usedPercentage = +item.usedPercentage + (+data.value);
-                        item.paticipantsCount++;
-                    }
-                    this.stopLoader();
-                } else {
-                    //todo показать попап, что превышено число заявок
+            .then(resultCode => {
+                let result = this.processMetaMaskResult(resultCode);
+                if (resultCode !== 10) {
+                    throw new Error(result);
                 }
+            })
+            .then(() => {
+                let item = this.state.orders.items.filter(item => {
+                    return item.id === data.itemId
+                })[0];
+                if (item) {
+                    item.usedPercentage = +item.usedPercentage + (+data.value);
+                    item.paticipantsCount++;
+                }
+                this.stopLoader();
             }).catch((error) => {
             this.handleError(error)
         }).then(() => {
@@ -170,14 +206,15 @@ class App extends Component {
                                          onClick={this.handleNewOrder.bind(this)}>Create a
             request</button>;
         const ordersTable = <OrdersTable items={this.state.orders.items} join={this.showJoinModal.bind(this)}/>;
-        const emptyOrdersTable = <div className="col-6 text-center"><strong>Orders list is empty. Please add a new order.&nbsp;</strong>{addNewRequestBtn}</div>;
+        const emptyOrdersTable = <div className="col-6 text-center"><strong>Orders list is empty. Please add a new
+            order.&nbsp;</strong>{addNewRequestBtn}</div>;
         return (
             <div>
                 <section className="jumbotron text-center">
                     <div className="container">
                         <h1 className="jumbotron-heading">The Escrow example</h1>
                         <p className="lead text-muted">It's an example of the web application to demonstrate
-                           the demo escrow smart-contracts.</p>
+                            the demo escrow smart-contracts.</p>
                         {/*<p>*/}
                         {/*<a href="#" className="btn btn-primary" onClick={this.handleClickMetamask.bind(this)}*/}
                         {/*disabled={!this.state.metaMaskProvider}>Use*/}
@@ -197,7 +234,8 @@ class App extends Component {
                         {this.state.loader && loader}
                         {this.state.metaMask.init && <div><strong>Please wait while Metamask is inited</strong></div>}
                         {this.state.metaMask.error &&
-                        <div className="text-danger"><strong>Can't init Metamask. Please install <a href="https://metamask.io/">Metamask </a>
+                        <div className="text-danger"><strong>Can't init Metamask. Please install <a
+                            href="https://metamask.io/">Metamask </a>
                             before</strong>
                         </div>}
                     </div>

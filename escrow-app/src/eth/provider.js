@@ -19,7 +19,7 @@ export default class Provider {
          * Address of contract which was deployed to Ropsten
          * @type {string}
          */
-        this.contractAddress = '0xfd816Fa6DEfA8fe50c42c3EB56843C95876D3334';
+        this.contractAddress = '0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67';
     }
 
     /**
@@ -90,15 +90,21 @@ export default class Provider {
      * @returns {Promise.<TResult>|*|{anyOf}}
      */
     join(id, amount) {
-        return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
+        return this.Escrow.at(this.contractAddress).then((contractInstance) => {
             let requestId = +id;
             let value = +amount;
             return contractInstance.join(requestId, value, {
-                gas: 140000,
+                gas: 240000,
                 from: window.web3.eth.accounts[0]
-            }).then(function (result) {
+            }).then((result) => {
                 console.dir(result);
-                return true;
+                let transactionHash = result.tx;
+                return this.Escrow.at(this.contractAddress).then(contractInstance => {
+                    return contractInstance.txlog.call(transactionHash).then(data => {
+                        let resultCode = data.c[0];
+                        return resultCode;
+                    });
+                });
             });
         });
     }
@@ -113,7 +119,7 @@ export default class Provider {
     createRequest(title, amount, id) {
         return this.Escrow.at(this.contractAddress).then(function (contractInstance) {
             return contractInstance.createRequest(title, amount, id, {
-                gas: 140000,
+                gas: 240000,
                 from: window.web3.eth.accounts[0]
             }).then(function (result) {
                 console.dir(result);
