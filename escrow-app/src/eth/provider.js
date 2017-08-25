@@ -14,12 +14,13 @@ function sortOrders(item1, item2) {
  * This class provide access functions to Etherium test network(Ropsten)
  */
 export default class Provider {
-    constructor() {
+    constructor(contractAddress, web3provider) {
         /**
          * Address of contract which was deployed to Ropsten
          * @type {string}
          */
-        this.contractAddress = '0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67';
+        this.contractAddress = contractAddress;
+        this.web3 = web3provider;
     }
 
     /**
@@ -28,11 +29,11 @@ export default class Provider {
      */
     init() {
         this.metaMaskEnabled = false;
-        if (window.web3) {
-            window.web3 = new Web3(window.web3.currentProvider);
+        if (this.web3) {
+            this.web3 = new Web3(this.web3.currentProvider);
 
             this.Escrow = contract(escrow_artifacts);
-            this.Escrow.setProvider(window.web3.currentProvider);
+            this.Escrow.setProvider(this.web3.currentProvider);
 
             this.metaMaskEnabled = true;
         }
@@ -62,7 +63,7 @@ export default class Provider {
                         contractInstance.requests.call(id).then(data => {
                             let element = {
                                 id: data[0].c[0],
-                                title: window.web3.toAscii(data[1]),
+                                title: this.web3.toAscii(data[1]),
                                 amount: data[2].c[0],
                                 usedPercentage: data[3].c[0],
                                 paticipantsCount: data[4].c[0],

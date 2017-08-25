@@ -11,7 +11,7 @@ function getNextId() {
 
 export default class EscrowService {
     constructor() {
-        this.provider = new Provider();
+        this.provider = new Provider('0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67', window.web3);
         this.providerInited = false;
         this.providerInitCount = 0;
     }
