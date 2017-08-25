@@ -1,9 +1,9 @@
-import {createCallMock} from '../helpers/mockHelper'
 import Provider from '../../eth/provider';
+import {ConnectorFactoryMock} from '../helpers/mockHelper';
 
 
 jest.mock('truffle-contract', () => {
-    let module= require('../helpers/mockHelper');
+    let module = require('../helpers/mockHelper');
     let contractInstanceEmpty = {
         getRequestsInfo: {
             call: module.createCallMock([])
@@ -11,15 +11,15 @@ jest.mock('truffle-contract', () => {
     };
     let contractInstanceOneElement = {
         getRequestsInfo: {
-            call: module.createCallMock([{c:[1]}])
+            call: module.createCallMock([{c: [1]}])
         }
     };
     let contractInstanceReturnIds = {
         getRequestsInfo: {
             call: module.createCallMock([1])
         },
-        requests:{
-            call: module.createCallMock([{c:[1]},'Name',{c:[10]},{c:[0]},{c:[0]}])
+        requests: {
+            call: module.createCallMock([{c: [1]}, 'Name', {c: [10]}, {c: [0]}, {c: [0]}])
         }
     };
     let atMock = jest.fn().mockImplementationOnce(() => {
@@ -48,23 +48,20 @@ jest.mock('truffle-contract', () => {
     });
 });
 
-let web3 = {
-    currentProvider: {},
-    toAscii: (data)=>{return data.toString();}
-};
 
 
-describe('Etherium provider tests', () => {
+
+describe('Etherium getOrders provider tests', () => {
     test('getOrders should return empty list if no ids in store', () => {
-        let provider = new Provider('0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67', web3);
+        let provider = new Provider('0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67', new ConnectorFactoryMock().getConnector());
         provider.init();
         return provider.getOrders().then((data) => {
             expect(data.length).toBe(0);
         })
-    })
+    });
 
     test('getOrders should return empty list if store returns not empty ids list', () => {
-        let provider = new Provider('0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67', web3);
+        let provider = new Provider('0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67', new ConnectorFactoryMock().getConnector());
         provider.init();
         return provider.getOrders().then((data) => {
             expect(data[0].id).toBe(1);
