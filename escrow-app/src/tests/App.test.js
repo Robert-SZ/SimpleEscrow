@@ -3,6 +3,8 @@ import {shallow} from 'enzyme';
 import App from '../App'
 
 jest.mock('../EscrowService');
+jest.mock('../eth/provider');
+jest.mock('../eth/ConnectorFactory');
 
 describe('App Tests', () => {
     test('Show Metamask initing text', () => {

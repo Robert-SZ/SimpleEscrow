@@ -7,6 +7,9 @@ import OrdersTable from './OrdersTable';
 import CreateRequestModal from './CreateRequestModal';
 import JoinRequestModal from './JoinRequestModal'
 
+import Provider from './eth/provider';
+import ConnectorFactory from './eth/ConnectorFactory';
+
 
 function processMetaMaskError(error) {
     if (error && error.message.indexOf('MetaMask') > -1) {
@@ -42,7 +45,8 @@ class App extends Component {
             }
 
         };
-        this.escrowService = new EscrowService();
+        let provider = new Provider('0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67', new ConnectorFactory().getConnector());
+        this.escrowService = new EscrowService(provider);
     }
 
     showLoader() {
