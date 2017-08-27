@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/css/bootstrap-theme.css';
+
 
 import {ProgressBar} from 'react-bootstrap';
 import EscrowService from './EscrowService';
@@ -223,14 +222,6 @@ class App extends Component {
                         <h1 className="jumbotron-heading">The Escrow example</h1>
                         <p className="lead text-muted">It's an example of the web application to demonstrate
                             the demo escrow smart-contracts.</p>
-                        {/*<p>*/}
-                        {/*<a href="#" className="btn btn-primary" onClick={this.handleClickMetamask.bind(this)}*/}
-                        {/*disabled={!this.state.metaMaskProvider}>Use*/}
-                        {/*Metamask</a>*/}
-                        {/*<a href="#" className="btn btn-secondary" disabled={!this.state.metaMaskProvider}>Use*/}
-                        {/*API</a>*/}
-                        {/*</p>*/}
-
                     </div>
                 </section>
                 <div className="container">
