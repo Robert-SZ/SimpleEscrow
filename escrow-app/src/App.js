@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/css/bootstrap-theme.css';
+
 
 import {ProgressBar} from 'react-bootstrap';
 import EscrowService from './EscrowService';
 import OrdersTable from './OrdersTable';
 import CreateRequestModal from './CreateRequestModal';
 import JoinRequestModal from './JoinRequestModal'
+
+import Provider from './eth/provider';
+import ConnectorFactory from './eth/ConnectorFactory';
 
 
 function processMetaMaskError(error) {
@@ -43,7 +45,8 @@ class App extends Component {
             }
 
         };
-        this.escrowService = new EscrowService();
+        let provider = new Provider('0x0F6cBC1E9169D079cEEd11c0Ac67544520E5bf67', new ConnectorFactory().getConnector());
+        this.escrowService = new EscrowService(provider);
     }
 
     showLoader() {
@@ -223,14 +226,6 @@ class App extends Component {
                         <h1 className="jumbotron-heading">The Escrow example</h1>
                         <p className="lead text-muted">It's an example of the web application to demonstrate
                             the demo escrow smart-contracts.</p>
-                        {/*<p>*/}
-                        {/*<a href="#" className="btn btn-primary" onClick={this.handleClickMetamask.bind(this)}*/}
-                        {/*disabled={!this.state.metaMaskProvider}>Use*/}
-                        {/*Metamask</a>*/}
-                        {/*<a href="#" className="btn btn-secondary" disabled={!this.state.metaMaskProvider}>Use*/}
-                        {/*API</a>*/}
-                        {/*</p>*/}
-
                     </div>
                 </section>
                 <div className="container">

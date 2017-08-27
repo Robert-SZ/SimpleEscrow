@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import requestShape from './requestShape'
 
 class OrderItem extends React.Component {
 
@@ -21,7 +22,8 @@ class OrderItem extends React.Component {
 }
 
 OrderItem.propTypes={
-    join: PropTypes.func.isRequired
+    join: PropTypes.func.isRequired,
+    item: PropTypes.shape(requestShape).isRequired
 };
 
 export default OrderItem

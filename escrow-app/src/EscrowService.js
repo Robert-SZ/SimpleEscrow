@@ -1,4 +1,4 @@
-import Provider from './eth/provider';
+
 
 let _ordersIdsList = undefined;
 
@@ -10,8 +10,8 @@ function getNextId() {
 }
 
 export default class EscrowService {
-    constructor() {
-        this.provider = new Provider();
+    constructor(provider) {
+        this.provider = provider;
         this.providerInited = false;
         this.providerInitCount = 0;
     }
