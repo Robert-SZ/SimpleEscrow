@@ -7,5 +7,6 @@ Run `npm run test` to launch the tests.
 
 # Run Solidity Tests
 
-Установить тест rpc
-truffle test
+1. Установить тест rpc
+2. запустить rpc
+3. truffle test
