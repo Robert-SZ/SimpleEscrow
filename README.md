@@ -7,6 +7,11 @@ Run `npm run test` to launch the tests.
 
 # Run Solidity Tests
 
-1. Установить тест rpc
-2. запустить rpc
-3. truffle test
+1. You should install ethereumjs-testrpc:
+- npm install ethereumjs-testrpc web3@0.20.1.
+
+2. Launch testrpc net with the following command: 
+- nodemodules/.bin/testrpc
+
+3. Run command truffle test to launch solidity tests from the project directory
+- truffle test
