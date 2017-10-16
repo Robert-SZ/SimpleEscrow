@@ -72,17 +72,17 @@ class App extends Component {
 
     fillOrders() {
         this.showLoader();
-        this.escrowService.getOrders().then(items => {
-            if (items && items.length > 0) {
-                this.setState({orders: {...this.state.orders, showEmpty: false, items: items}})
-            } else {
-                this.setState({orders: {...this.state.orders, showEmpty: true}});
-            }
-        }).catch((error) => {
-            this.handleError(error)
-        }).then(() => {
-            this.stopLoader()
-        });
+        // this.escrowService.getOrders().then(items => {
+        //     if (items && items.length > 0) {
+        //         this.setState({orders: {...this.state.orders, showEmpty: false, items: items}})
+        //     } else {
+        //         this.setState({orders: {...this.state.orders, showEmpty: true}});
+        //     }
+        // }).catch((error) => {
+        //     this.handleError(error)
+        // }).then(() => {
+        //     this.stopLoader()
+        // });
     }
 
     handleNewOrder() {

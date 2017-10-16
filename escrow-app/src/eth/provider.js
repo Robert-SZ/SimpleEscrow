@@ -1,6 +1,7 @@
 import {default as contract} from 'truffle-contract'
 
 import escrow_artifacts from './Escrow.json'
+import ethdelta_artifacts from './etherDelta/EtherDelta.json'
 
 function sortOrders(item1, item2) {
     if (item2.id > item1.id) {
@@ -31,6 +32,22 @@ export default class Provider {
 
         this.Escrow = contract(escrow_artifacts);
         this.Escrow.setProvider(this.connector.getCurrentProvider());
+
+        this.EtherDelta = contract(ethdelta_artifacts);
+        this.EtherDelta.setProvider(this.connector.getCurrentProvider());
+
+        let etherdelta= this.EtherDelta.at('0x8d12a197cb00d4747a1fe03395095ce2a5cc6819').allEvents({fromBlock: 	4371600});
+        etherdelta.watch((error,result)=>{
+            if(result && result.event==="Trade") {
+                console.log('Trade:');
+                console.log(result);
+            }
+            if(result && result.event==="Order") {
+                console.log('Order:');
+                console.log(result);
+            }
+        });
+
 
         this.metaMaskEnabled = true;
         return this.metaMaskEnabled;

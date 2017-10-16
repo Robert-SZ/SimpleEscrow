@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App Tests Show request item 1`] = `
+<tr>
+  <td>
+    Test Title
+  </td>
+  <td>
+    0.00/100
+     ETH
+  </td>
+  <td>
+    0
+  </td>
+  <td>
+    <a
+      href="#"
+      onClick={[Function]}
+    >
+      Join
+    </a>
+  </td>
+</tr>
+`;

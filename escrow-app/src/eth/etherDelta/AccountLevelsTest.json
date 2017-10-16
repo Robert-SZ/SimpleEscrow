@@ -1,0 +1,62 @@
+{
+  "contract_name": "AccountLevelsTest",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "accountLevels",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "accountLevel",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "name": "level",
+          "type": "uint256"
+        }
+      ],
+      "name": "setAccountLevel",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000f57600080fd5b5b6101978061001f6000396000f300606060405263ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166314577c5581146100535780631cbd0519146100915780638abadb6b146100cf575b600080fd5b341561005e57600080fd5b61007f73ffffffffffffffffffffffffffffffffffffffff60043516610100565b60405190815260200160405180910390f35b341561009c57600080fd5b61007f73ffffffffffffffffffffffffffffffffffffffff60043516610112565b60405190815260200160405180910390f35b34156100da57600080fd5b6100fe73ffffffffffffffffffffffffffffffffffffffff6004351660243561013e565b005b60006020819052908152604090205481565b73ffffffffffffffffffffffffffffffffffffffff81166000908152602081905260409020545b919050565b73ffffffffffffffffffffffffffffffffffffffff821660009081526020819052604090208190555b50505600a165627a7a723058203bc09ded4b084ae1b030d40280ca63fa6c7201e1a5e601567ea92a802be1a7750029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1508134505353
+}

@@ -1,0 +1,27 @@
+{
+  "contract_name": "AccountLevels",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "accountLevel",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000f57600080fd5b5b60ab8061001e6000396000f300606060405263ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631cbd05198114603c575b600080fd5b3415604657600080fd5b606573ffffffffffffffffffffffffffffffffffffffff600435166077565b60405190815260200160405180910390f35b60005b9190505600a165627a7a72305820360154e3ed5b9fb65cc6cae9bdb69e508e940a4b79968e9d4b2fa310deb41ac20029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1508134505353
+}
